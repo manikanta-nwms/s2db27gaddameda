@@ -12,7 +12,6 @@ router.get('/', function(req, res, next) {
 /* GET costumes */
 router.get('/', mobile_controller.mobile_view_all_Page );
 
-router.get('/', mobile_controller.mobile_view_all_Page );
 /* GET detail mobile page */
 router.get('/detail', mobile_controller.mobile_view_one_Page);
 /* GET create mobile page */

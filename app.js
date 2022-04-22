@@ -4,6 +4,23 @@ var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 
+var passport = require('passport');
+var LocalStrategy = require('passport-local').Strategy;
+
+passport.use(new LocalStrategy(
+  function(username, password, done) {
+  Account.findOne({ username: username }, function (err, user) {
+  if (err) { return done(err); }
+  if (!user) {
+  return done(null, false, { message: 'Incorrect username.' });
+  }
+  if (!user.validPassword(password)) {
+  return done(null, false, { message: 'Incorrect password.' });
+  }
+  return done(null, user);
+  });
+  
+
 const connectionString = "mongodb+srv://mani:mani@cluster0.kmhj7.mongodb.net/learnMongo?retryWrites=true&w=majority";
 mongoose = require('mongoose');
 mongoose.connect(connectionString,
@@ -35,6 +52,14 @@ app.use('/mobiles', mobilesRouter);
 app.use('/addmods', addmodsRouter);
 app.use('/selector', selectorRouter)
 app.use('/resource', resourceRouter);
+
+app.use(require('express-session')({
+  secret: 'keyboard cat',
+  resave: false,
+  saveUninitialized: false
+ }));
+ app.use(passport.initialize());
+ app.use(passport.session());
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
